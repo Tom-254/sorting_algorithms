@@ -1,4 +1,5 @@
 #include "sort.h"
+#include <stdio.h>
 
 /**
  * partition - finds the partition for the quicksort using the Lomuto scheme
@@ -9,28 +10,39 @@
  *
  * Return: index of the partition
  */
-int partition(int *array, int lo, int hi, size_t size)
+size_t partition(int *array, ssize_t lo, ssize_t hi, size_t size)
 {
-	int pivot, boundary, temp;
-	int i;
+	ssize_t i, j;
+	int swap, pivot;
 
 	pivot = array[hi];
-	boundary = lo - 1;
-
-	for (i = lo; i <= hi; i++)
-		if (array[i] <= pivot)
+	i = lo - 1;
+	for (j = lo; j < hi; j++)
+	{
+		if (array[j] < pivot)
 		{
-			boundary++;
-			temp = array[i];
-			array[i] = array[boundary];
-			array[boundary] = temp;
-			print_array(array, size);
+			i++;
+			if (i != j)
+			{
+				swap = array[i];
+				array[i] = array[j];
+				array[j] = swap;
+				print_array(array, size);
+			}
 		}
-	return (boundary);
+	}
+	if (array[hi] < array[i + 1])
+	{
+		swap = array[i + 1];
+		array[i + 1] = array[hi];
+		array[hi] = swap;
+		print_array(array, size);
+	}
+	return (i + 1);
 }
 
 /**
- * sort - sorts a partition of an array of integers
+ * quicksort - sorts a partition of an array of integers
  * @array: array to sort
  * @lo: lowest index of the partition to sort
  * @hi: highest index of the partition to sort
@@ -38,15 +50,15 @@ int partition(int *array, int lo, int hi, size_t size)
  *
  * Return: void
  */
-void sort(int *array, int lo, int hi, size_t size)
+void quicksort(int *array, ssize_t lo, ssize_t hi, size_t size)
 {
-	int boundary;
+	ssize_t pivot;
 
 	if (lo < hi)
 	{
-		boundary = partition(array, lo, hi, size);
-		sort(array, lo, boundary - 1, size);
-		sort(array, boundary + 1, hi, size);
+		pivot = partition(array, lo, hi, size);
+		quicksort(array, lo, pivot - 1, size);
+		quicksort(array, pivot + 1, hi, size);
 
 	}
 }
@@ -63,5 +75,5 @@ void quick_sort(int *array, size_t size)
 {
 	if (array == NULL || size < 2)
 		return;
-	sort(array, 0, size - 1, size);
+	quicksort(array, 0, size - 1, size);
 }
