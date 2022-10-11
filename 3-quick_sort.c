@@ -9,7 +9,7 @@
  *
  * Return: index of the partition
  */
-size_t partition(int *array, int lo, int hi, size_t size)
+int partition(int *array, int lo, int hi, size_t size)
 {
 	int pivot, boundary, temp;
 	int i;
@@ -26,7 +26,7 @@ size_t partition(int *array, int lo, int hi, size_t size)
 			array[boundary] = temp;
 			print_array(array, size);
 		}
-	return ((size_t)boundary);
+	return (boundary);
 }
 
 /**
