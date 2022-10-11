@@ -1,71 +1,108 @@
 #include "sort.h"
+#include <stdlib.h>
+void sort(int *array, size_t beg, size_t size, size_t);
+int check(int *array, size_t beg, size_t end);
+int swap(int *, size_t, size_t, size_t);
 
 /**
- * partition - finds the partition for the quicksort using the Lomuto scheme
- * @array: array to sort
- * @lo: lowest index of the partition to sort
- * @hi: highest index of the partition to sort
- * @size: size of the array
- *
- * Return: index of the partition
+ * quick_sort - Sorts an array of integers in asceding order using the
+ * quick sort algorithm implementing the Lomuto partition scheme.
+ * @array: Array of integers that need to be sorted.
+ * @size: The size of the array to sort.
  */
-size_t partition(int *array, int lo, int hi, size_t size)
+void quick_sort(int *array, size_t size)
 {
-	int pivot, boundary, temp;
-	int i;
+	size_t beg;
 
-	pivot = array[hi];
-	boundary = lo - 1;
-
-	for (i = lo; i <= hi; i++)
-		if (array[i] <= pivot)
-		{
-			boundary++;
-			temp = array[i];
-			array[i] = array[boundary];
-			array[boundary] = temp;
-			print_array(array, size);
-		}
-	return ((size_t)boundary);
+	beg = 0;
+	if (size < 2 || array == NULL)
+		return;
+	size = size - 1;
+	sort(array, beg, size, size + 1);
 }
 
 /**
- * sort - sorts a partition of an array of integers
- * @array: array to sort
- * @lo: lowest index of the partition to sort
- * @hi: highest index of the partition to sort
- * @size: size of the array
- *
- * Return: void
+ * sort - Does the actual sorting.
+ * @array: Array of integers that need to be sorted.
+ * @beg: The lower bound of the array partition.
+ * @end: The upper bound of the array partion.
+ * @og: The original size of the whole array. Used only for printing.
  */
-void sort(int *array, int lo, int hi, size_t size)
+void sort(int *array, size_t beg, size_t end, size_t og)
 {
-	int boundary;
+	size_t i;
+	size_t j;
+	int piv;
+	int flag;
+	int c;
 
-	if (lo < hi)
+	piv = array[end];
+	j = beg;
+	i = j - 1;
+	flag = 0;
+
+	for (j = beg; j < end; j++)
 	{
-		boundary = partition(array, lo, hi, size);
-		sort(array, lo, boundary - 1, size);
-		sort(array, boundary + 1, hi, size);
+		if (array[j] <= piv)
+		{
+			i++;
+			flag = swap(array, j, i, og);
+		}
+	}
+	i++;
+	flag = swap(array, j, i, og);
 
+	if (flag == 0)
+	{
+		c = check(array, beg, end);
+		if (c == 1)
+			sort(array, beg, end - 1, og);
+	}
+	else
+	{
+		sort(array, beg, i, og);
+		sort(array, i, end, og);
 	}
 }
 
 /**
- * quick_sort - sorts an array of integers in ascending order using the
- * Quick sort algorithm
- * @array: The array to sort
- * @size: The size of the array
- *
- * Return: void
+ * swap - Swaps the numbers in the array.
+ * @array: Array of integers that need to be sorted.
+ * @i: The lower bound of the array partition.
+ * @j: The upper bound of the array partion.
+ * @og: The original size of the whole array. Used only for printing.
+ * Return: 1 when a swap happens. 0 otherwise.
  */
-void quick_sort(int *array, size_t size)
+int swap(int *array, size_t i, size_t j, size_t og)
 {
-	if (array == NULL || size < 2)
-		return;
-	sort(array, 0, size - 1, size);
+	int tmp;
+
+	if (j != i)
+	{
+		tmp = array[i];
+		array[i] = array[j];
+		array[j] = tmp;
+		print_array(array, og);
+		return (1);
+	}
+	return (0);
 }
 
+/**
+ * check - checks if the array portion is already sorted.
+ * @array: Array of integers that need to be sorted.
+ * @beg: The lower bound of the array partition.
+ * @end: The upper bound of the array partion.
+ * Return: 1 if the array is not sorted. 0 otherwise.
+ */
+int check(int *array, size_t beg, size_t end)
+{
+	size_t i;
 
-
-
+	for (i = beg; i < end; i++)
+	{
+		if (array[i] > array[i + 1])
+			return (1);
+	}
+	return (0);
+}
