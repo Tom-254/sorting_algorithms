@@ -1,76 +1,79 @@
 #include "sort.h"
 #include <stdio.h>
+
 /**
- * quick_sort - sorts an array using the quick sort algorithm
+ * partition - finds the partition for the quicksort using the Lomuto scheme
+ * @array: array to sort
+ * @lo: lowest index of the partition to sort
+ * @hi: highest index of the partition to sort
+ * @size: size of the array
  *
- * @array: pointer to integer array
- * @size: size of integer array
+ * Return: index of the partition
+ */
+size_t partition(int *array, ssize_t lo, ssize_t hi, size_t size)
+{
+	ssize_t i, j;
+	int swap, pivot;
+
+	pivot = array[hi];
+	i = lo - 1;
+	for (j = lo; j < hi; j++)
+	{
+		if (array[j] < pivot)
+		{
+			i++;
+			if (i != j)
+			{
+				swap = array[i];
+				array[i] = array[j];
+				array[j] = swap;
+				print_array(array, size);
+			}
+		}
+	}
+	if (array[hi] < array[i + 1])
+	{
+		swap = array[i + 1];
+		array[i + 1] = array[hi];
+		array[hi] = swap;
+		print_array(array, size);
+	}
+	return (i + 1);
+}
+
+/**
+ * quicksort - sorts a partition of an array of integers
+ * @array: array to sort
+ * @lo: lowest index of the partition to sort
+ * @hi: highest index of the partition to sort
+ * @size: size of the array
  *
- * Return: Nothing
+ * Return: void
+ */
+void quicksort(int *array, ssize_t lo, ssize_t hi, size_t size)
+{
+	ssize_t pivot;
+
+	if (lo < hi)
+	{
+		pivot = partition(array, lo, hi, size);
+		quicksort(array, lo, pivot - 1, size);
+		quicksort(array, pivot + 1, hi, size);
+
+	}
+}
+
+/**
+ * quick_sort - sorts an array of integers in ascending order using the
+ * Quick sort algorithm
+ * @array: The array to sort
+ * @size: The size of the array
+ *
+ * Return: void
  */
 void quick_sort(int *array, size_t size)
 {
-	if (!array || size < 2)
+	if (array == NULL || size < 2)
 		return;
-	realqs(array, 0, size - 1, size);
-}
-/**
- * realqs - recursive function for sorting array
- *
- * @array: pointer to integer array
- * @start: starting index
- * @end: ending index
- * @size: size of the array
- *
- * Return: Nothing
- */
-void realqs(int *array, int start, int end, size_t size)
-{
-	int pivot;
-
-	if (start < end)
-	{
-		pivot = partition(array, start, end, size);
-		realqs(array, start, pivot - 1, size);
-		realqs(array, pivot + 1, end, size);
-	}
-}
-/**
- * partition - partitions array, swaps values, and prints
- *
- * @array: pointer to integer array
- * @start: starting index
- * @end: ending index
- * @size: size of the array
- *
- * Return: Nothing
- */
-int partition(int *array, size_t start, size_t end, size_t size)
-{
-	size_t i = start - 1;
-	size_t j;
-	int tmp = 0;
-	int tmp2 = 0;
-	size_t place = 0;
-
-	for (j = start; j < end; j++)
-	{
-		if (array[j] < array[end])
-		{
-			i++;
-			tmp = array[i];
-			array[i] = array[j];
-			array[j] = tmp;
-			if (array[j] != array[i])
-				print_array(array, size);
-		}
-	}
-	i++;
-	place = i;
-	tmp2 = array[i];
-	array[i] = array[end];
-	array[end] = tmp2;
-	if (array[j] != array[i])
-		print_array(array, size);
-	return (place);
+	quicksort(array, 0, size - 1, size);
 }
